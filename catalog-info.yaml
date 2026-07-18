@@ -1,34 +1,8 @@
 apiVersion: backstage.io/v1alpha1
-kind: Component
+kind: Location
 metadata:
-  name: idp-openstack
-  description: Internal Developer Platform on OpenStack - Backstage, ArgoCD, Crossplane, Vault, Kyverno, Calico
-  tags:
-    - backstage
-    - openstack
-    - kubernetes
-    - platform
-  annotations:
-    github.com/project-slug: devportal-labs/idp-openstack
+  name: devportal-templates
+  description: DevPortal Platform Templates
 spec:
-  type: service
-  lifecycle: production
-  owner: group:default/platform-engineers
-  system: devportal-platform
----
-apiVersion: backstage.io/v1alpha1
-kind: System
-metadata:
-  name: devportal-platform
-  description: The complete internal developer platform system
-spec:
-  owner: group:default/platform-engineers
----
-apiVersion: backstage.io/v1alpha1
-kind: Group
-metadata:
-  name: platform-engineers
-  description: Platform engineering team responsible for infrastructure and developer tools
-spec:
-  type: team
-  children: []
+  targets:
+    - ./templates/microservice/template.yaml
