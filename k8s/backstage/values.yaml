@@ -114,6 +114,8 @@ backstage:
       path: /.backstage/health/v1/liveness
       port: 7007
       scheme: HTTPS
+  nodeSelector:
+    kubernetes.io/hostname: p1-worker2
   readinessProbe:
     httpGet:
       path: /.backstage/health/v1/readiness
@@ -148,5 +150,3 @@ service:
     name: tls-backend
     targetPort: backend
   type: NodePort
-nodeSelector:
-  kubernetes.io/hostname: p1-worker2
