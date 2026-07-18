@@ -90,11 +90,11 @@ backstage:
   - name: POSTGRES_HOST
     value: devportal-postgresql
   - name: POSTGRES_PORT
-    value: "5432"
+    value: '5432'
   - name: POSTGRES_USER
     value: backstage
   - name: NODE_TLS_REJECT_UNAUTHORIZED
-    value: "0"
+    value: '0'
   extraEnvVarsSecrets:
   - backstage-secrets
   extraVolumeMounts:
@@ -119,6 +119,14 @@ backstage:
       path: /.backstage/health/v1/readiness
       port: 7007
       scheme: HTTPS
+  service:
+    nodePorts:
+      backend: 30443
+    ports:
+      backend: 7007
+      name: tls-backend
+      targetPort: backend
+    type: NodePort
   startupProbe:
     httpGet:
       path: /.backstage/health/v1/liveness
