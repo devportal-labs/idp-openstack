@@ -1,8 +1,24 @@
 apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
-  name: devportal-templates
-  description: DevPortal Platform Templates
+  name: devportal-root
+  description: DevPortal Root Location
 spec:
   targets:
     - ./templates/microservice/template.yaml
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: idp-openstack
+  description: Internal Developer Platform on OpenStack - Backstage, ArgoCD, Crossplane, Vault, Kyverno, Calico
+  tags:
+    - backstage
+    - openstack
+    - kubernetes
+    - platform
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-engineers
+  system: devportal-platform
