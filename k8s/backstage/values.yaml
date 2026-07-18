@@ -148,3 +148,5 @@ service:
     name: tls-backend
     targetPort: backend
   type: NodePort
+nodeSelector:
+  kubernetes.io/hostname: p1-worker2
