@@ -95,6 +95,8 @@ backstage:
     value: backstage
   - name: NODE_TLS_REJECT_UNAUTHORIZED
     value: '0'
+  - name: NODE_OPTIONS
+    value: --no-node-snapshot
   extraEnvVarsSecrets:
   - backstage-secrets
   extraVolumeMounts:
