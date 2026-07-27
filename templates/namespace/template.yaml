@@ -1,0 +1,75 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: namespace-template
+  title: New Namespace
+  description: Request a new Kubernetes namespace with policies, resource quotas and network policies
+  tags:
+    - namespace
+    - kubernetes
+    - infrastructure
+spec:
+  owner: platform-engineers
+  type: infrastructure
+  parameters:
+    - title: Namespace Information
+      required:
+        - name
+        - team
+        - environment
+      properties:
+        name:
+          title: Namespace Name
+          type: string
+          description: Name of the namespace (lowercase, no spaces)
+          pattern: '^[a-z0-9-]+$'
+        team:
+          title: Team
+          type: string
+          description: Team that owns this namespace
+          default: platform-engineers
+        environment:
+          title: Environment
+          type: string
+          enum:
+            - development
+            - staging
+            - production
+          default: development
+        cpu_limit:
+          title: CPU Limit
+          type: string
+          description: Total CPU limit for the namespace
+          default: "4"
+        memory_limit:
+          title: Memory Limit
+          type: string
+          description: Total memory limit for the namespace
+          default: 8Gi
+  steps:
+    - id: fetch-template
+      name: Fetch Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          team: ${{ parameters.team }}
+          environment: ${{ parameters.environment }}
+          cpu_limit: ${{ parameters.cpu_limit }}
+          memory_limit: ${{ parameters.memory_limit }}
+
+    - id: publish
+      name: Create Pull Request
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=devportal-labs&repo=idp-openstack
+        branchName: namespace-${{ parameters.name }}
+        title: "feat: add namespace ${{ parameters.name }} for ${{ parameters.team }}"
+        description: "Automated namespace request for team ${{ parameters.team }} in ${{ parameters.environment }}"
+        targetBranchName: main
+
+  output:
+    links:
+      - title: Pull Request
+        url: ${{ steps['publish'].output.remoteUrl }}
