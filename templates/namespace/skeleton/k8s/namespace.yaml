@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${{ values.name }}
+  labels:
+    team: ${{ values.team }}
+    environment: ${{ values.environment }}
+    managed-by: devportal
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: ${{ values.name }}-quota
+  namespace: ${{ values.name }}
+spec:
+  hard:
+    requests.cpu: "${{ values.cpu_limit }}"
+    requests.memory: ${{ values.memory_limit }}
+    limits.cpu: "${{ values.cpu_limit }}"
+    limits.memory: ${{ values.memory_limit }}
+    pods: "20"
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: ${{ values.name }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              team: ${{ values.team }}

@@ -1,0 +1,89 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: ${{ values.name }}-postgresql
+  namespace: crossplane-system
+  labels:
+    team: ${{ values.owner }}
+    environment: ${{ values.environment }}
+spec:
+  forProvider:
+    manifest:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: ${{ values.name }}-postgresql-pvc
+        namespace: default
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: ${{ values.storage }}
+        storageClassName: csi-cinder-sc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ${{ values.name }}-postgresql
+  namespace: default
+  labels:
+    app: ${{ values.name }}-postgresql
+    team: ${{ values.owner }}
+spec:
+  serviceName: ${{ values.name }}-postgresql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${{ values.name }}-postgresql
+  template:
+    metadata:
+      labels:
+        app: ${{ values.name }}-postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:15-alpine
+          env:
+            - name: POSTGRES_DB
+              value: ${{ values.name }}
+            - name: POSTGRES_USER
+              value: ${{ values.name }}_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ${{ values.name }}-postgresql-secret
+                  key: password
+          ports:
+            - containerPort: 5432
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: csi-cinder-sc
+        resources:
+          requests:
+            storage: ${{ values.storage }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${{ values.name }}-postgresql
+  namespace: default
+spec:
+  selector:
+    app: ${{ values.name }}-postgresql
+  ports:
+    - port: 5432
+      targetPort: 5432

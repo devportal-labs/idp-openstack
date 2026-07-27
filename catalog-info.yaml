@@ -6,6 +6,8 @@ metadata:
 spec:
   targets:
     - ./templates/microservice/template.yaml
+    - ./templates/namespace/template.yaml
+    - ./templates/postgresql/template.yaml
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component

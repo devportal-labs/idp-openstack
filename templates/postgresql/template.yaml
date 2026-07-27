@@ -1,0 +1,73 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: postgresql-template
+  title: New PostgreSQL Database
+  description: Provision a PostgreSQL database on OpenStack via Crossplane
+  tags:
+    - database
+    - postgresql
+    - crossplane
+    - infrastructure
+spec:
+  owner: platform-engineers
+  type: resource
+  parameters:
+    - title: Database Information
+      required:
+        - name
+        - owner
+        - storage
+      properties:
+        name:
+          title: Database Name
+          type: string
+          description: Name of the PostgreSQL instance (lowercase, no spaces)
+          pattern: '^[a-z0-9-]+$'
+        owner:
+          title: Owner Team
+          type: string
+          description: Team requesting the database
+          default: platform-engineers
+        storage:
+          title: Storage Size
+          type: string
+          enum:
+            - 10Gi
+            - 20Gi
+            - 50Gi
+          default: 10Gi
+        environment:
+          title: Environment
+          type: string
+          enum:
+            - development
+            - staging
+            - production
+          default: development
+  steps:
+    - id: fetch-template
+      name: Fetch Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          storage: ${{ parameters.storage }}
+          environment: ${{ parameters.environment }}
+
+    - id: publish
+      name: Create Pull Request
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=devportal-labs&repo=idp-openstack
+        branchName: postgresql-${{ parameters.name }}
+        title: "feat: provision PostgreSQL ${{ parameters.name }} for ${{ parameters.owner }}"
+        description: "Automated PostgreSQL provisioning request via Crossplane"
+        targetBranchName: main
+
+  output:
+    links:
+      - title: Pull Request
+        url: ${{ steps['publish'].output.remoteUrl }}
