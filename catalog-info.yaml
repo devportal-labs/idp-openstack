@@ -1,6 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
+  annotations:
+    backstage.io/kubernetes-id: idp-openstack
   name: devportal-root
   description: DevPortal Root Location
 spec:
@@ -12,6 +14,8 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  annotations:
+    backstage.io/kubernetes-id: idp-openstack
   name: idp-openstack
   description: Internal Developer Platform on OpenStack - Backstage, ArgoCD, Crossplane, Vault, Kyverno, Calico
   tags:
