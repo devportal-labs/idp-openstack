@@ -4,6 +4,7 @@ metadata:
   name: idp-openstack
   description: Internal Developer Platform on OpenStack - Backstage, ArgoCD, Crossplane, Vault, Kyverno, Calico
   annotations:
+    argocd/app-name: devportal-backstage
     github.com/project-slug: devportal-labs/idp-openstack
     backstage.io/kubernetes-id: devportal-backstage
     backstage.io/techdocs-ref: dir:.
