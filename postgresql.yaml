@@ -1,0 +1,89 @@
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: database-test-03-postgresql
+  namespace: crossplane-system
+  labels:
+    team: platform-engineers
+    environment: development
+spec:
+  forProvider:
+    manifest:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: database-test-03-postgresql-pvc
+        namespace: default
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: csi-cinder-sc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database-test-03-postgresql
+  namespace: default
+  labels:
+    app: database-test-03-postgresql
+    team: platform-engineers
+spec:
+  serviceName: database-test-03-postgresql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database-test-03-postgresql
+  template:
+    metadata:
+      labels:
+        app: database-test-03-postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:15-alpine
+          env:
+            - name: POSTGRES_DB
+              value: database-test-03
+            - name: POSTGRES_USER
+              value: database-test-03_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-test-03-postgresql-secret
+                  key: password
+          ports:
+            - containerPort: 5432
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: csi-cinder-sc
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-test-03-postgresql
+  namespace: default
+spec:
+  selector:
+    app: database-test-03-postgresql
+  ports:
+    - port: 5432
+      targetPort: 5432
