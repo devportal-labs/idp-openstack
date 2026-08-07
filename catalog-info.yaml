@@ -1,23 +1,12 @@
 apiVersion: backstage.io/v1alpha1
-kind: Location
-metadata:
-  annotations:
-    backstage.io/kubernetes-id: idp-openstack
-  name: devportal-root
-  description: DevPortal Root Location
-spec:
-  targets:
-    - ./templates/microservice/template.yaml
-    - ./templates/namespace/template.yaml
-    - ./templates/postgresql/template.yaml
----
-apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  annotations:
-    backstage.io/kubernetes-id: idp-openstack
   name: idp-openstack
   description: Internal Developer Platform on OpenStack - Backstage, ArgoCD, Crossplane, Vault, Kyverno, Calico
+  annotations:
+    github.com/project-slug: devportal-labs/idp-openstack
+    backstage.io/kubernetes-id: devportal-backstage
+    backstage.io/techdocs-ref: dir:.
   tags:
     - backstage
     - openstack
