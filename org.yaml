@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-engineers
+  description: Platform Engineering Team
+spec:
+  type: team
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: devportal-platform
+  description: DevPortal Internal Developer Platform
+  tags:
+    - platform
+    - openstack
+spec:
+  owner: platform-engineers
