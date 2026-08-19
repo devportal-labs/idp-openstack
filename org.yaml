@@ -17,3 +17,13 @@ metadata:
     - openstack
 spec:
   owner: platform-engineers
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: abderraouf
+spec:
+  profile:
+    displayName: Abderraouf
+    email: WRITE_YOUR_REAL_EMAIL_HERE
+  memberOf: [platform-engineers]
